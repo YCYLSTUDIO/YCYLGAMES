@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Click Battle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="stylesb.css" />
+    <link rel="icon" href="../../logo.svg" />
+  </head>
+  <body>
+    <div class="dis" id="start">
+      <div class="form">
+        <input
+          type="text"
+          name="nama"
+          id="namain"
+          placeholder="Masukan Nama"
+          title="Nama"
+        /><br />
+        <button title="Lanjut" onclick="mnls()">Lanjut</button>
+      </div>
+    </div>
+    <div class="dis n" id="game">
+      <main onclick="clickt()">
+        <h1 id="numcl">0</h1>
+      </main>
+      <div class="pk2">
+        <div class="jdl">
+          <h2>Leaderboard</h2>
+        </div>
+        <div class="tam">
+          <div class="kos"></div>
+          <div id="tam"></div>
+          <div class="kos"></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+      // database
+      var firebase_data_script;
+      const firebaseConfig = {
+        apiKey: "AIzaSyDdlczptZ5TzhBf1Cf5BwWgwqAw0B0eUPE",
+        authDomain: "gamet-43098.firebaseapp.com",
+        projectId: "gamet-43098",
+        storageBucket: "gamet-43098.appspot.com",
+        messagingSenderId: "771611714793",
+        appId: "1:771611714793:web:aaf7ac48dcf2fc5b09fc78",
+        measurementId: "G-PQRS06BEN3",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      let dts;
+
+      function gdff() {
+        database.ref("leaderboard").on("value", (snapshot) => {
+          const data = snapshot.val();
+
+          if (data) {
+            setaupdate(data);
+
+            if (clicknum == 0) {
+              const index = data.findIndex((item) => item.nama === namapl);
+              if (index !== -1) {
+                clicknum = data[index].num;
+                document.getElementById("numcl").innerHTML = clicknum;
+              }
+            }
+
+            dts = data;
+          } else {
+            console.warn("Data is null or undefined"); // Log jika data null atau undefined
+          }
+        });
+      }
+
+      function mnls() {
+        database.ref("leaderboard").on("value", (snapshot) => {
+          const data = snapshot.val();
+
+          if (data) {
+            mnl2(data);
+          } else {
+            console.warn("Data is null or undefined"); // Log jika data null atau undefined
+          }
+        });
+      }
+
+      function tambah() {
+        const newData2 = {
+          nama: namapl,
+          num: clicknum,
+        };
+        const newData = dts;
+
+        const index = newData.findIndex((item) => item.nama === namapl);
+        if (index !== -1) {
+          newData[index].num = clicknum;
+        } else {
+          newData.push(newData2);
+        }
+
+        database
+          .ref("leaderboard")
+          .set(newData)
+          .then(() => {
+            // console.log('Data berhasil ditambahkan');
+          })
+          .catch((error) => {
+            console.error("Error menambahkan data:", error);
+          });
+      }
+      function reset() {
+        const newData = [
+          {
+            nama: namapl,
+            num: clicknum,
+          },
+        ];
+
+        database
+          .ref("leaderboard")
+          .set(newData)
+          .then(() => {
+            console.log("Data berhasil direset");
+          })
+          .catch((error) => {
+            console.error("Error menambahkan data:", error);
+          });
+      }
+    </script>
+    <script src="scriptsb.js"></script>
+  </body>
+</html>
